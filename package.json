@@ -1,0 +1,18 @@
+{
+  "name": "socketio-starter",
+  "version": "1.0.0",
+  "description": "Socket.io starter server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "socket.io",
+    "chat"
+  ],
+  "author": "Sergio Rodrigues <exprodrigues@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^1.7.3"
+  }
+}

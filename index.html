@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>socket.io</title>
+	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+	<link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+	<link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+</head>
+<body style="padding: 50px 0;">
+	<div id="app" class="container">
+		<h1>socket.io</h1>
+		<p>{{ time.format('LLLL:ss') }}</p>
+
+		<div class="row">
+			<div class="column">
+				<input type="text" v-model="text" v-on:keyup.13="send()" ref="input">
+			</div>
+			<div class="column">
+				<button class="button-primary button-outline" @click="send()">Send</button>
+			</div>
+		</div>
+	  	
+		<table>
+			<thead>
+			<tr>
+				<th>Mensagem</th>
+				<th width="300"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr v-for="message in messages">
+				<td>{{ message.text }}</td>
+				<td style="text-align:right">{{ formatTime(message.time) }}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/locale/pt-br.js"></script>
+	<script>
+		const socket = io();
+		moment.locale('pt-BR');
+
+		new Vue({
+			el: '#app',
+			data () {
+				return {
+					text: '',
+					messages: [],
+					time: moment()
+				}
+			},
+			mounted () {
+				socket.on('message', message => this.messages.push({ text: message, time: moment() }));
+				socket.on('time', time => this.time = moment(time));
+				this.$refs.input.focus();
+			},
+			methods: {
+				send () {
+					if (this.text.trim() != '') {
+						socket.emit('message', this.text);
+						this.text = '';
+					}
+				},
+				formatTime (time) {
+					return time.fromNow();
+				}
+			}
+		});
+	</script>
+</body>
+</html>
